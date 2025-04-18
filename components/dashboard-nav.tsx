@@ -1,8 +1,5 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { FileText, FolderOpen, Home, LogOut, Settings } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +14,10 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { SignedIn, UserButton } from "@clerk/nextjs"
+import { FileText, FolderOpen, Home, LogOut, Settings } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export function DashboardNav() {
   const pathname = usePathname()
@@ -84,7 +84,7 @@ export function DashboardNav() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src="/placeholder.svg?height=24&width=24" alt="User" />
                     <AvatarFallback>JD</AvatarFallback>
@@ -93,7 +93,14 @@ export function DashboardNav() {
                     <span>John Doe</span>
                     <p className="text-xs text-muted-foreground">john.doe@example.com</p>
                   </div>
+                </div> */}
+                <div className="text-xs text-muted-foreground">
+
+                  <SignedIn>
+                    <UserButton showName />
+                  </SignedIn>
                 </div>
+
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
