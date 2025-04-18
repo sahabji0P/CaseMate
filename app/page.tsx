@@ -1,10 +1,17 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowDown, ArrowRight, CheckCircle } from "lucide-react"
 import { motion } from "framer-motion"
+import { ArrowDown, ArrowRight, CheckCircle } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+
+
+import {
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
 
 export default function WelcomePage() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -30,14 +37,17 @@ export default function WelcomePage() {
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-2xl font-bold">CaseMate</div>
           <div className="space-x-4">
-            <Link href="/login">
-              <Button variant="ghost" className="text-white hover:text-blue-300">
-                Login
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button className="shimmer-button bg-blue-600 hover:bg-blue-700">Register</Button>
-            </Link>
+            <SignedOut>
+              <Link href={"/auth/sign-in"}>
+                <Button className="shimmer-button bg-blue-600 hover:bg-blue-700">Login</Button>
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+
+
+
           </div>
         </div>
       </nav>
@@ -53,7 +63,7 @@ export default function WelcomePage() {
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Meet CaseMate – Your Legal AI Assistant</h1>
           <p className="text-xl md:text-2xl mb-10 text-blue-200">Upload. Understand. Act.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
+            {/* <Link href="/register">
               <Button size="lg" className="shimmer-button bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
                 Get Started
               </Button>
@@ -61,12 +71,12 @@ export default function WelcomePage() {
             <Link href="/login">
               <Button
                 size="lg"
-                variant="outline"
+                variant="outline"s
                 className="text-lg px-8 py-6 border-blue-400 text-blue-200 hover:bg-blue-900/30"
               >
                 Login
               </Button>
-            </Link>
+            </Link> */}
           </div>
           <button
             onClick={scrollToHowItWorks}
