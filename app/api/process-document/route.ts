@@ -1,7 +1,7 @@
+import { CaseFolder } from '@/lib/models/case-folder';
+import connectDB from '@/lib/mongodb';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import { CaseFolder } from '@/lib/models/case-folder';
 
 if (!process.env.GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY is not set in environment variables');
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
         const originalName = file.name;
         const fileExtension = originalName.split('.').pop();
         const fileName = `${timestamp}-${originalName}`;
-        
+
         // In a real application, you would upload the file to a storage service
         // For now, we'll just store a placeholder URL
         const fileUrl = `/uploads/${fileName}`;
@@ -145,83 +145,88 @@ export async function POST(request: Request) {
 
         // Find the case folder
         const caseFolder = await CaseFolder.findById(caseFolderId);
-        
+
         if (!caseFolder) {
             return NextResponse.json({ error: 'Case folder not found' }, { status: 404 });
         }
 
         // Add the document to the folder
         caseFolder.documents.push(document);
-        
+
         // Update case folder metadata if available
         if (metadata.caseNumber && !caseFolder.caseNumber) {
             caseFolder.caseNumber = metadata.caseNumber;
         }
-        
+
         if (metadata.caseTitle && !caseFolder.caseTitle) {
             caseFolder.caseTitle = metadata.caseTitle;
         }
-        
+
         if (metadata.nextHearingDate && (!caseFolder.nextHearingDate || new Date(metadata.nextHearingDate) > caseFolder.nextHearingDate)) {
             caseFolder.nextHearingDate = new Date(metadata.nextHearingDate);
         }
-        
+
         // Add important dates
         if (metadata.deadlines && Array.isArray(metadata.deadlines)) {
-            interface Deadline {
-                date?: string | Date;
-                description?: string;
-                type?: string;
-            }
+            const newDeadlines = metadata.deadlines
+                .map((deadline: string | { date?: string | Date; description?: string }) => {
+                    try {
+                        // If deadline is already an object with date and description
+                        if (typeof deadline === 'object' && deadline.date && deadline.description) {
+                            return {
+                                date: new Date(deadline.date),
+                                description: deadline.description,
+                                type: 'deadline'
+                            };
+                        }
 
-            const newDeadlines = metadata.deadlines.map((deadline: string | Deadline) => {
-                try {
-                    // If deadline is already an object with date and description
-                    if (typeof deadline === 'object' && deadline.date && deadline.description) {
-                        return {
-                            date: new Date(deadline.date),
-                            description: deadline.description,
-                            type: 'deadline'
-                        };
+                        // If deadline is a string, try to parse it
+                        if (typeof deadline === 'string') {
+                            // Try to extract date from the string
+                            const dateMatch = deadline.match(/\d{4}-\d{2}-\d{2}/);
+                            if (dateMatch) {
+                                return {
+                                    date: new Date(dateMatch[0]),
+                                    description: deadline,
+                                    type: 'deadline'
+                                };
+                            }
+                        }
+                        return null;
+                    } catch (error) {
+                        console.error('Error parsing deadline:', deadline, error);
+                        return null;
                     }
-                    
-                    // If deadline is a string
-                    return {
-                        date: new Date(deadline as string),
-                        description: deadline as string,
-                        type: 'deadline'
-                    };
-                } catch (error) {
-                    console.error('Error parsing deadline:', deadline, error);
-                    return null;
-                }
-            }).filter((deadline: { date: Date; description: string; type: string } | null): deadline is { date: Date; description: string; type: string } => 
-                deadline !== null && 
-                deadline.date instanceof Date && 
-                !isNaN(deadline.date.getTime())
-            );
-            
+                })
+                .filter((deadline: { date: Date; description: string; type: string } | null): deadline is { date: Date; description: string; type: string } =>
+                    deadline !== null &&
+                    deadline.date instanceof Date &&
+                    !isNaN(deadline.date.getTime())
+                );
+
             if (newDeadlines.length > 0) {
-                caseFolder.importantDates = [
-                    ...caseFolder.importantDates || [],
-                    ...newDeadlines
-                ];
+                // Ensure importantDates is initialized as an array
+                if (!caseFolder.importantDates) {
+                    caseFolder.importantDates = [];
+                }
+                // Add new deadlines to existing ones
+                caseFolder.importantDates.push(...newDeadlines);
             }
         }
-        
+
         try {
             await caseFolder.save();
             console.log('Case folder saved successfully with new document and dates');
         } catch (saveError) {
             console.error('Error saving case folder:', saveError);
-            return NextResponse.json({ 
-                error: 'Failed to save case folder', 
+            return NextResponse.json({
+                error: 'Failed to save case folder',
                 details: saveError instanceof Error ? saveError.message : 'Unknown error'
             }, { status: 500 });
         }
 
-        return NextResponse.json({ 
-            success: true, 
+        return NextResponse.json({
+            success: true,
             caseFolder,
             document
         });
