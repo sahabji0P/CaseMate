@@ -5,6 +5,7 @@ import { fetchRecentDocuments } from "@/lib/api-helpers"
 import { FileText } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { MetadataDialog } from "./metadata-dialog"
 import { PDFPreview } from "./pdf-preview-dialog"
 
 export function RecentUploads() {
@@ -12,11 +13,14 @@ export function RecentUploads() {
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<{ url: string; name: string } | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [selectedMetadata, setSelectedMetadata] = useState<any>(null);
+  const [isMetadataOpen, setIsMetadataOpen] = useState(false);
 
   useEffect(() => {
     const loadRecentUploads = async () => {
       try {
         const data = await fetchRecentDocuments(3); // Limit to 3 recent documents
+        console.log('Fetched documents:', data);
         setRecentUploads(data);
       } catch (error) {
         console.error('Failed to load recent uploads:', error);
@@ -55,24 +59,35 @@ export function RecentUploads() {
             </div>
           )}
           <div className="flex justify-end space-x-2 pt-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setSelectedFile({
-                  url: upload.document.fileUrl,
-                  name: upload.document.fileName
-                });
-                setIsPreviewOpen(true);
-              }}
-            >
-              Preview
-            </Button>
             <Link href={"/upload"}>
-              <Button variant="outline" size="sm">
-                View Details
+              <Button
+                variant="ghost"
+                size="sm"
+
+              >
+                Preview
               </Button>
             </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                console.log('Document metadata:', upload.document.metadata);
+                const metadata = {
+                  title: upload.document.fileName,
+                  author: upload.document.author,
+                  date: new Date(upload.document.uploadDate).toLocaleDateString(),
+                  summary: upload.document.summary,
+                  keyPoints: upload.document.keyPoints,
+                  ...upload.document.metadata
+                };
+                console.log('Processed metadata:', metadata);
+                setSelectedMetadata(metadata);
+                setIsMetadataOpen(true);
+              }}
+            >
+              View Details
+            </Button>
           </div>
         </div>
       ))}
@@ -92,6 +107,17 @@ export function RecentUploads() {
           }}
           fileUrl={selectedFile.url}
           fileName={selectedFile.name}
+        />
+      )}
+
+      {selectedMetadata && (
+        <MetadataDialog
+          isOpen={isMetadataOpen}
+          onClose={() => {
+            setIsMetadataOpen(false);
+            setSelectedMetadata(null);
+          }}
+          metadata={selectedMetadata}
         />
       )}
     </div>

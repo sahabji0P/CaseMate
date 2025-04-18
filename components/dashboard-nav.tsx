@@ -43,6 +43,12 @@ export function DashboardNav() {
       href: "/documents",
       variant: "default",
     },
+    {
+      title: "Upload",
+      icon: FileText,
+      href: "/upload",
+      variant: "default",
+    },
   ]
 
   const DotIcon = () => {
@@ -58,8 +64,8 @@ export function DashboardNav() {
       <Sidebar>
         <SidebarHeader className="flex h-14 items-center border-b px-4">
           <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
-           <div className="mb-2 fixed left-1 top-2">
-            <span className="text-3xl font-bold">Case<span className="text-red-800">Mate</span></span>
+            <div className="mb-2 fixed left-1 top-2">
+              <span className="text-3xl font-bold">Case<span className="text-red-800">Mate</span></span>
             </div>
           </Link>
           <div className="ml-auto md:hidden">
