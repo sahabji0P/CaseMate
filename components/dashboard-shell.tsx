@@ -13,8 +13,8 @@ export function DashboardShell({ children, className }: DashboardShellProps) {
       <aside className="fixed top-0 z-30 hidden h-screen w-[240px] border-r md:sticky md:block">
         <DashboardNav />
       </aside>
-      <main className={cn("flex-1 w-full md:pl-0 md:ml-[240px]", className)}>
-        <div className="container mx-auto py-6 page-transition">{children}</div>
+      <main className={cn("flex-1 w-full md:ps-[-80px] md:ml-[220px]", className)}>
+        <div className="container mx-auto py-4 page-transition">{children}</div>
       </main>
     </div>
   )

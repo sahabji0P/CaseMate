@@ -6,7 +6,7 @@ import type React from "react"
 import "./globals.css"
 
 import { dark } from '@clerk/themes'
-
+import { Ripple } from "@/components/magicui/ripple";
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -30,6 +30,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+            
             {children}
           </ThemeProvider>
         </body>

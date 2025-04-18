@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { ArrowDown, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-
+import { Ripple } from "@/components/magicui/ripple"
 
 import {
   SignedIn,
@@ -35,7 +35,7 @@ export default function WelcomePage() {
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/80 backdrop-blur-md py-2" : "py-4"}`}
       >
         <div className="container mx-auto flex justify-between items-center">
-          <div className="text-2xl font-bold">CaseMate</div>
+          <div className="text-2xl font-bold">Case<span className="text-red-800">Mate</span></div>
           <div className="space-x-4">
             <SignedOut>
               <Link href={"/auth/sign-in"}>
@@ -45,22 +45,20 @@ export default function WelcomePage() {
             <SignedIn>
               <UserButton />
             </SignedIn>
-
-
-
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="ripple-bg min-h-screen flex flex-col justify-center items-center text-center px-4 pt-16">
+      <section className="ripple-bg min-h-screen flex flex-col justify-center items-center text-center px-4 pt-16 relative">
+        <Ripple mainCircleSize={250} mainCircleOpacity={0.5} numCircles={12} />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-3xl mx-auto"
+          className="max-w-3xl mx-auto relative z-10"
         >
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">Meet CaseMate – Your Legal AI Assistant</h1>
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">Meet Case<span className="text-red-800">Mate</span> – Your Legal AI Assistant</h1>
           <p className="text-xl md:text-2xl mb-10 text-blue-200">Upload. Understand. Act.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {/* <Link href="/register">
