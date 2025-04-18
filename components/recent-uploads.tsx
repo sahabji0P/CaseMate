@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { FileText } from "lucide-react"
 import { fetchRecentDocuments } from "@/lib/api-helpers"
+import { FileText } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import { PDFPreview } from "./pdf-preview-dialog"
 
 export function RecentUploads() {
@@ -67,9 +68,11 @@ export function RecentUploads() {
             >
               Preview
             </Button>
-            <Button variant="outline" size="sm">
-              View Details
-            </Button>
+            <Link href={"/upload"}>
+              <Button variant="outline" size="sm">
+                View Details
+              </Button>
+            </Link>
           </div>
         </div>
       ))}
