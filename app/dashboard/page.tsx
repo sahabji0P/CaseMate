@@ -15,9 +15,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getAllDocuments } from "@/lib/api-helpers"
-import { PDFPreview } from "@/components/pdf-preview-dialog"
-import { DotPattern } from "@/components/magicui/dot-pattern"
-import { cn } from "@/lib/utils"
+import { Calendar, ChevronRight, FileText, Plus } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview")
@@ -47,12 +46,7 @@ export default function DashboardPage() {
   return (
     <DashboardShell>
       <div className="relative">
-        <DotPattern
-          glow={true}
-          className={cn(
-            "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-          )}
-        />
+
         <DashboardHeader heading="Dashboard" text="Manage your legal documents and cases.">
           <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
             <DialogTrigger asChild>
@@ -84,12 +78,7 @@ export default function DashboardPage() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card className="col-span-2">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -155,12 +144,7 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="cases" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <Card>
             <CardHeader>
               <CardTitle>My Cases</CardTitle>
@@ -229,12 +213,7 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="documents" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <Card>
             <CardHeader>
               <CardTitle>Documents</CardTitle>
@@ -337,12 +316,7 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="calendar" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <Card>
             <CardHeader>
               <CardTitle>Calendar</CardTitle>
