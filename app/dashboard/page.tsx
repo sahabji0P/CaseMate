@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -15,10 +15,33 @@ import { CaseFolders } from "@/components/case-folders"
 import { ChatbotButton } from "@/components/chatbot-button"
 import { FileUpload } from "@/components/file-upload"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { getAllDocuments } from "@/lib/api-helpers"
+import { PDFPreview } from "@/components/pdf-preview-dialog"
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview")
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false)
+  const [documents, setDocuments] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedFile, setSelectedFile] = useState<{ url: string; name: string } | null>(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+
+  useEffect(() => {
+    const loadDocuments = async () => {
+      try {
+        const data = await getAllDocuments();
+        setDocuments(data);
+      } catch (error) {
+        console.error('Failed to load documents:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (activeTab === "documents") {
+      loadDocuments();
+    }
+  }, [activeTab]);
 
   return (
     <DashboardShell>
@@ -123,27 +146,27 @@ export default function DashboardPage() {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[
-                  {
-                    title: "Smith vs. Johnson",
-                    type: "Civil Dispute",
-                    status: "Active",
-                    documents: 12,
-                    nextDeadline: "May 15, 2025",
-                  },
-                  {
-                    title: "Property Acquisition",
-                    type: "Real Estate",
-                    status: "Pending",
-                    documents: 8,
-                    nextDeadline: "June 3, 2025",
-                  },
-                  {
-                    title: "Insurance Claim",
-                    type: "Insurance",
-                    status: "Active",
-                    documents: 5,
-                    nextDeadline: "April 28, 2025",
-                  },
+                  // {
+                  //   title: "Smith vs. Johnson",
+                  //   type: "Civil Dispute",
+                  //   status: "Active",
+                  //   documents: 12,
+                  //   nextDeadline: "May 15, 2025",
+                  // },
+                  // {
+                  //   title: "Property Acquisition",
+                  //   type: "Real Estate",
+                  //   status: "Pending",
+                  //   documents: 8,
+                  //   nextDeadline: "June 3, 2025",
+                  // },
+                  // {
+                  //   title: "Insurance Claim",
+                  //   type: "Insurance",
+                  //   status: "Active",
+                  //   documents: 5,
+                  //   nextDeadline: "April 28, 2025",
+                  // },
                 ].map((caseItem, index) => (
                   <Card key={index} className="card-hover">
                     <CardContent className="p-4">
@@ -212,79 +235,77 @@ export default function DashboardPage() {
                       <CardDescription>Upload a PDF document to process and analyze</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <FileUpload />
+                      <FileUpload onSuccess={() => loadDocuments()} />
                     </CardContent>
                   </Card>
 
-                  {[
-                    {
-                      title: "Complaint.pdf",
-                      type: "PDF",
-                      size: "2.4 MB",
-                      date: "Apr 10, 2025",
-                    },
-                    {
-                      title: "Response Letter.docx",
-                      type: "DOCX",
-                      size: "1.8 MB",
-                      date: "Apr 12, 2025",
-                    },
-                    {
-                      title: "Evidence Photos.zip",
-                      type: "ZIP",
-                      size: "15.7 MB",
-                      date: "Apr 14, 2025",
-                    },
-                    {
-                      title: "Court Order.pdf",
-                      type: "PDF",
-                      size: "3.2 MB",
-                      date: "Apr 16, 2025",
-                    },
-                    {
-                      title: "Witness Statement.docx",
-                      type: "DOCX",
-                      size: "1.1 MB",
-                      date: "Apr 17, 2025",
-                    },
-                    {
-                      title: "Settlement Agreement.pdf",
-                      type: "PDF",
-                      size: "4.5 MB",
-                      date: "Apr 18, 2025",
-                    },
-                  ].map((doc, index) => (
-                    <Card key={index} className="card-hover">
-                      <CardContent className="p-4">
-                        <div className="flex items-start space-x-3">
-                          <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded">
-                            <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-medium truncate">{doc.title}</h3>
-                            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                              <span>
-                                {doc.type} • {doc.size}
-                              </span>
-                              <span>{doc.date}</span>
+                  {loading ? (
+                    <div className="col-span-full text-center py-4">Loading documents...</div>
+                  ) : documents.length === 0 ? (
+                    <div className="col-span-full text-center py-4 text-muted-foreground">
+                      No documents uploaded yet.
+                    </div>
+                  ) : (
+                    documents.map((doc) => (
+                      <Card key={doc._id} className="card-hover">
+                        <CardContent className="p-4">
+                          <div className="flex items-start space-x-3">
+                            <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded">
+                              <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-medium truncate">{doc.fileName}</h3>
+                              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                                <span>
+                                  From: {doc.folderName}
+                                </span>
+                                <span>{new Date(doc.uploadDate).toLocaleDateString()}</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex justify-between mt-4">
-                          <Button variant="ghost" size="sm">
-                            View
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            Download
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                          {doc.summary && (
+                            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                              {doc.summary}
+                            </p>
+                          )}
+                          <div className="flex justify-between mt-4">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedFile({
+                                  url: doc.fileUrl,
+                                  name: doc.fileName
+                                });
+                                setIsPreviewOpen(true);
+                              }}
+                            >
+                              Preview
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              Download
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {selectedFile && (
+            <PDFPreview
+              isOpen={isPreviewOpen}
+              onClose={() => {
+                setIsPreviewOpen(false);
+                setSelectedFile(null);
+              }}
+              fileUrl={selectedFile.url}
+              fileName={selectedFile.name}
+            />
+          )}
         </TabsContent>
 
         <TabsContent value="calendar" className="space-y-4">

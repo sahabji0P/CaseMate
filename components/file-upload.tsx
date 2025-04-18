@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { CaseFolderSelector } from "@/components/case-folder-selector"
 import { Separator } from "@/components/ui/separator"
+import { revalidatePath } from "next/cache"
 
 interface FileUploadProps {
   onSuccess?: () => void
@@ -21,6 +22,7 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
   const [newFolderName, setNewFolderName] = useState("")
   const [newFolderDescription, setNewFolderDescription] = useState("")
   const { toast } = useToast()
+  const router = useRouter()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -108,6 +110,9 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
       if (onSuccess) {
         onSuccess();
       }
+
+      // Refresh the page data
+      revalidatePath('/dashboard');
     } catch (error) {
       console.error('Upload error:', error);
       toast({

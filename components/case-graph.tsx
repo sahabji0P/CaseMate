@@ -40,78 +40,78 @@ export function CaseGraph() {
 
   // Sample case data
   const caseData = {
-    case1: {
-      name: "Smith vs. Johnson",
-      color: "#3b82f6", // Blue
-      stages: [
-        { id: "case1-complaint", label: "Complaint", status: "completed", stageIndex: 0 },
-        { id: "case1-response", label: "Response", status: "completed", stageIndex: 1 },
-        { id: "case1-evidence", label: "Evidence", status: "completed", stageIndex: 2 },
-        { id: "case1-hearing", label: "Hearing", status: "pending", stageIndex: 3 },
-        { id: "case1-judgment", label: "Judgment", status: "upcoming", stageIndex: 4 },
-      ],
-    },
-    case2: {
-      name: "Property Acquisition",
-      color: "#10b981", // Green
-      stages: [
-        { id: "case2-filing", label: "Filing", status: "completed", stageIndex: 0 },
-        { id: "case2-review", label: "Review", status: "completed", stageIndex: 1 },
-        { id: "case2-approval", label: "Approval", status: "pending", stageIndex: 2 },
-        { id: "case2-closing", label: "Closing", status: "upcoming", stageIndex: 3 },
-      ],
-    },
-    case3: {
-      name: "Insurance Claim",
-      color: "#8b5cf6", // Purple
-      stages: [
-        { id: "case3-claim", label: "Claim", status: "completed", stageIndex: 0 },
-        { id: "case3-investigation", label: "Investigation", status: "pending", stageIndex: 1 },
-        { id: "case3-settlement", label: "Settlement", status: "upcoming", stageIndex: 2 },
-      ],
-    },
+    // case1: {
+    //   name: "Smith vs. Johnson",
+    //   color: "#3b82f6", // Blue
+    //   stages: [
+    //     { id: "case1-complaint", label: "Complaint", status: "completed", stageIndex: 0 },
+    //     { id: "case1-response", label: "Response", status: "completed", stageIndex: 1 },
+    //     { id: "case1-evidence", label: "Evidence", status: "completed", stageIndex: 2 },
+    //     { id: "case1-hearing", label: "Hearing", status: "pending", stageIndex: 3 },
+    //     { id: "case1-judgment", label: "Judgment", status: "upcoming", stageIndex: 4 },
+    //   ],
+    // },
+    // case2: {
+    //   name: "Property Acquisition",
+    //   color: "#10b981", // Green
+    //   stages: [
+    //     { id: "case2-filing", label: "Filing", status: "completed", stageIndex: 0 },
+    //     { id: "case2-review", label: "Review", status: "completed", stageIndex: 1 },
+    //     { id: "case2-approval", label: "Approval", status: "pending", stageIndex: 2 },
+    //     { id: "case2-closing", label: "Closing", status: "upcoming", stageIndex: 3 },
+    //   ],
+    // },
+    // case3: {
+    //   name: "Insurance Claim",
+    //   color: "#8b5cf6", // Purple
+    //   stages: [
+    //     { id: "case3-claim", label: "Claim", status: "completed", stageIndex: 0 },
+    //     { id: "case3-investigation", label: "Investigation", status: "pending", stageIndex: 1 },
+    //     { id: "case3-settlement", label: "Settlement", status: "upcoming", stageIndex: 2 },
+    //   ],
+    // },
   }
 
   // Sample document data
   const documentData: Record<string, CaseDocument[]> = {
-    "case1-complaint": [
-      { id: "doc1", title: "Complaint.pdf", date: "Apr 10, 2025", summary: "Initial complaint filing", type: "PDF" },
-      { id: "doc2", title: "Evidence A.pdf", date: "Apr 11, 2025", summary: "Supporting evidence", type: "PDF" },
-    ],
-    "case1-response": [
-      { id: "doc3", title: "Response.docx", date: "Apr 15, 2025", summary: "Defendant's response", type: "DOCX" },
-    ],
-    "case1-evidence": [
-      { id: "doc4", title: "Witness Statement.pdf", date: "Apr 17, 2025", summary: "Witness testimony", type: "PDF" },
-      { id: "doc5", title: "Photos.zip", date: "Apr 18, 2025", summary: "Photo evidence", type: "ZIP" },
-    ],
-    "case2-filing": [
-      {
-        id: "doc6",
-        title: "Property Filing.pdf",
-        date: "Apr 12, 2025",
-        summary: "Initial property filing",
-        type: "PDF",
-      },
-    ],
-    "case2-review": [
-      {
-        id: "doc7",
-        title: "Review Report.docx",
-        date: "Apr 16, 2025",
-        summary: "Property review report",
-        type: "DOCX",
-      },
-    ],
-    "case3-claim": [
-      {
-        id: "doc8",
-        title: "Insurance Claim.pdf",
-        date: "Apr 14, 2025",
-        summary: "Initial insurance claim",
-        type: "PDF",
-      },
-    ],
+    // "case1-complaint": [
+    //   { id: "doc1", title: "Complaint.pdf", date: "Apr 10, 2025", summary: "Initial complaint filing", type: "PDF" },
+    //   { id: "doc2", title: "Evidence A.pdf", date: "Apr 11, 2025", summary: "Supporting evidence", type: "PDF" },
+    // ],
+    // "case1-response": [
+    //   { id: "doc3", title: "Response.docx", date: "Apr 15, 2025", summary: "Defendant's response", type: "DOCX" },
+    // ],
+    // "case1-evidence": [
+    //   { id: "doc4", title: "Witness Statement.pdf", date: "Apr 17, 2025", summary: "Witness testimony", type: "PDF" },
+    //   { id: "doc5", title: "Photos.zip", date: "Apr 18, 2025", summary: "Photo evidence", type: "ZIP" },
+    // ],
+    // "case2-filing": [
+    //   {
+    //     id: "doc6",
+    //     title: "Property Filing.pdf",
+    //     date: "Apr 12, 2025",
+    //     summary: "Initial property filing",
+    //     type: "PDF",
+    //   },
+    // ],
+    // "case2-review": [
+    //   {
+    //     id: "doc7",
+    //     title: "Review Report.docx",
+    //     date: "Apr 16, 2025",
+    //     summary: "Property review report",
+    //     type: "DOCX",
+    //   },
+    // ],
+    // "case3-claim": [
+    //   {
+    //     id: "doc8",
+    //     title: "Insurance Claim.pdf",
+    //     date: "Apr 14, 2025",
+    //     summary: "Initial insurance claim",
+    //     type: "PDF",
+    //   },
+    // ],
   }
 
   // Prepare nodes and links for the graph

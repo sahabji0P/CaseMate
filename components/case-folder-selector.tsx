@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2, Plus, Folder } from "lucide-react"
+import { Loader2, Plus, Folder, Check } from "lucide-react"
 
 interface CaseFolder {
   _id: string
@@ -28,6 +28,8 @@ export function CaseFolderSelector({ onFolderSelect }: CaseFolderSelectorProps) 
   const [createNewFolder, setCreateNewFolder] = useState(false)
   const [newFolderName, setNewFolderName] = useState("")
   const [newFolderDescription, setNewFolderDescription] = useState("")
+  const [folderCreated, setFolderCreated] = useState(false)
+  const [createdFolderName, setCreatedFolderName] = useState("")
   const { toast } = useToast()
 
   useEffect(() => {
@@ -92,8 +94,11 @@ export function CaseFolderSelector({ onFolderSelect }: CaseFolderSelectorProps) 
         // Now notify the parent with the new folder ID
         onFolderSelect(folderData._id, false);
         
-        // Reset the form
-        setCreateNewFolder(false);
+        // Set the created folder state
+        setFolderCreated(true);
+        setCreatedFolderName(newFolderName);
+        
+        // Reset the form but keep createNewFolder true to maintain the UI state
         setNewFolderName("");
         setNewFolderDescription("");
         
@@ -122,37 +127,68 @@ export function CaseFolderSelector({ onFolderSelect }: CaseFolderSelectorProps) 
     }
   }
 
+  const resetState = () => {
+    setCreateNewFolder(false);
+    setFolderCreated(false);
+    setCreatedFolderName("");
+    setNewFolderName("");
+    setNewFolderDescription("");
+    setSelectedFolderId(null);
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <Button
-          variant={createNewFolder ? "default" : "outline"}
-          size="sm"
-          onClick={() => {
-            setCreateNewFolder(true);
-            setSelectedFolderId(null);
-          }}
-          className="flex-1"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Create New Folder
-        </Button>
-        <Button
-          variant={!createNewFolder ? "default" : "outline"}
-          size="sm"
-          onClick={() => {
-            setCreateNewFolder(false);
-            setNewFolderName("");
-            setNewFolderDescription("");
-          }}
-          className="flex-1"
-        >
-          <Folder className="mr-2 h-4 w-4" />
-          Select Existing Folder
-        </Button>
-      </div>
+      {!folderCreated && (
+        <div className="flex items-center space-x-2">
+          <Button
+            variant={createNewFolder ? "default" : "outline"}
+            size="sm"
+            onClick={() => {
+              setCreateNewFolder(true);
+              setSelectedFolderId(null);
+            }}
+            className="flex-1"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Create New Folder
+          </Button>
+          <Button
+            variant={!createNewFolder ? "default" : "outline"}
+            size="sm"
+            onClick={() => {
+              setCreateNewFolder(false);
+              setNewFolderName("");
+              setNewFolderDescription("");
+            }}
+            className="flex-1"
+          >
+            <Folder className="mr-2 h-4 w-4" />
+            Select Existing Folder
+          </Button>
+        </div>
+      )}
 
-      {createNewFolder ? (
+      {folderCreated ? (
+        <div className="rounded-md border border-green-200 bg-green-50 p-4">
+          <div className="flex items-center">
+            <Check className="h-5 w-5 text-green-500 mr-2" />
+            <div>
+              <h4 className="font-medium text-green-900">Folder Created Successfully</h4>
+              <p className="text-sm text-green-700">
+                "{createdFolderName}" is ready for your documents
+              </p>
+            </div>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={resetState}
+            className="mt-2"
+          >
+            Create Another Folder
+          </Button>
+        </div>
+      ) : createNewFolder ? (
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="folderName">Folder Name</Label>
@@ -201,9 +237,11 @@ export function CaseFolderSelector({ onFolderSelect }: CaseFolderSelectorProps) 
         </div>
       )}
 
-      <Button onClick={handleFolderSelect} className="w-full">
-        {createNewFolder ? "Create Folder" : "Select Folder"}
-      </Button>
+      {!folderCreated && (
+        <Button onClick={handleFolderSelect} className="w-full">
+          {createNewFolder ? "Create Folder" : "Select Folder"}
+        </Button>
+      )}
     </div>
   )
 } 

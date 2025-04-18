@@ -6,38 +6,38 @@ import { CheckCircle, Clock, FileText } from "lucide-react"
 
 export function TimelineView() {
   const timelineItems = [
-    {
-      id: 1,
-      title: "Complaint Filed",
-      date: "Apr 10, 2025",
-      document: "Complaint.pdf",
-      status: "completed",
-      icon: FileText,
-    },
-    {
-      id: 2,
-      title: "Response Submitted",
-      date: "Apr 15, 2025",
-      document: "Response.pdf",
-      status: "completed",
-      icon: FileText,
-    },
-    {
-      id: 3,
-      title: "Evidence Submission",
-      date: "Apr 20, 2025",
-      document: "Evidence.zip",
-      status: "completed",
-      icon: FileText,
-    },
-    {
-      id: 4,
-      title: "Court Hearing",
-      date: "May 5, 2025",
-      document: null,
-      status: "pending",
-      icon: Clock,
-    },
+    // {
+    //   id: 1,
+    //   title: "Complaint Filed",
+    //   date: "Apr 10, 2025",
+    //   document: "Complaint.pdf",
+    //   status: "completed",
+    //   icon: FileText,
+    // },
+    // {
+    //   id: 2,
+    //   title: "Response Submitted",
+    //   date: "Apr 15, 2025",
+    //   document: "Response.pdf",
+    //   status: "completed",
+    //   icon: FileText,
+    // },
+    // {
+    //   id: 3,
+    //   title: "Evidence Submission",
+    //   date: "Apr 20, 2025",
+    //   document: "Evidence.zip",
+    //   status: "completed",
+    //   icon: FileText,
+    // },
+    // {
+    //   id: 4,
+    //   title: "Court Hearing",
+    //   date: "May 5, 2025",
+    //   document: null,
+    //   status: "pending",
+    //   icon: Clock,
+    // },
   ]
 
   return (
