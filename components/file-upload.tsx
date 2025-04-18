@@ -1,13 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { CaseFolderSelector } from "@/components/case-folder-selector"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
-import { CaseFolderSelector } from "@/components/case-folder-selector"
-import { Separator } from "@/components/ui/separator"
-import { revalidatePath } from "next/cache"
+import { useState } from "react"
 
 interface FileUploadProps {
   onSuccess?: () => void
@@ -22,7 +21,7 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
   const [newFolderName, setNewFolderName] = useState("")
   const [newFolderDescription, setNewFolderDescription] = useState("")
   const { toast } = useToast()
-  const router = useRouter()
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -39,9 +38,9 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
   }
 
   const handleFolderSelect = (
-    selectedFolderId: string | null, 
-    createNew: boolean, 
-    folderName?: string, 
+    selectedFolderId: string | null,
+    createNew: boolean,
+    folderName?: string,
     folderDescription?: string
   ) => {
     console.log('Folder selected in FileUpload:', { selectedFolderId, createNew, folderName, folderDescription });
@@ -71,14 +70,14 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
     }
 
     setIsUploading(true)
-    
+
     try {
       // Process the document with the folder ID
       const formData = new FormData();
       formData.append("file", file);
       formData.append("caseFolderId", folderId);
       formData.append("createNewFolder", "false");
-      
+
       console.log('Processing document with folder ID:', folderId);
       const response = await fetch("/api/process-document", {
         method: "POST",
@@ -92,7 +91,7 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
 
       const data = await response.json();
       console.log('Response data:', data);
-      
+
       toast({
         title: "Document processed successfully",
         description: "The document has been analyzed and processed",
@@ -105,14 +104,11 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
       setCreateNewFolder(false);
       setNewFolderName("");
       setNewFolderDescription("");
-      
+
       // Call the onSuccess callback if provided
       if (onSuccess) {
         onSuccess();
       }
-
-      // Refresh the page data
-      revalidatePath('/dashboard');
     } catch (error) {
       console.error('Upload error:', error);
       toast({
@@ -137,8 +133,8 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
               disabled={isUploading}
             />
           </div>
-          <Button 
-            onClick={() => setStep("select-folder")} 
+          <Button
+            onClick={() => setStep("select-folder")}
             disabled={!file || isUploading}
             className="w-full"
           >
@@ -151,22 +147,22 @@ export function FileUpload({ onSuccess }: FileUploadProps) {
             <div className="text-sm font-medium">
               Selected file: {file?.name}
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setStep("select-file")}
               disabled={isUploading}
             >
               Change File
             </Button>
           </div>
-          
+
           <Separator />
-          
+
           <CaseFolderSelector onFolderSelect={handleFolderSelect} />
-          
-          <Button 
-            onClick={handleUpload} 
+
+          <Button
+            onClick={handleUpload}
             disabled={isUploading}
             className="w-full"
           >
