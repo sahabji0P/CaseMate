@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 // Load environment variables from .env.local file
 dotenv.config({ path: '.env.local' });
@@ -28,10 +28,12 @@ async function connectDB() {
     const options: mongoose.ConnectOptions = {
       ssl: true,
       tls: true,
-      tlsAllowInvalidCertificates: false,
-      tlsAllowInvalidHostnames: false,
+      tlsAllowInvalidCertificates: true,
+      tlsAllowInvalidHostnames: true,
       retryWrites: true,
       w: 'majority' as const,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
     console.log('MongoDB connection options:', options);
