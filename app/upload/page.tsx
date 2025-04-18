@@ -75,7 +75,7 @@ const DocumentUploader = () => {
         formData.append('file', uploadedFile);
 
         try {
-            const response = await fetch('/api/process-document', {
+            const response = await fetch('/api/analyser-ap', {
                 method: 'POST',
                 body: formData,
             });

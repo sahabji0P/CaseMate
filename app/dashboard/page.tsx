@@ -1,24 +1,22 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, ChevronRight, FileText, Plus } from "lucide-react"
+import { CalendarWidget } from "@/components/calendar-widget"
+import { CaseFolders } from "@/components/case-folders"
+import { CaseGraph } from "@/components/case-graph"
+import { ChatbotButton } from "@/components/chatbot-button"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { DashboardShell } from "@/components/dashboard-shell"
-import { CalendarWidget } from "@/components/calendar-widget"
-import { TimelineView } from "@/components/timeline-view"
-import { RecentUploads } from "@/components/recent-uploads"
-import { CaseGraph } from "@/components/case-graph"
-import { CaseFolders } from "@/components/case-folders"
-import { ChatbotButton } from "@/components/chatbot-button"
 import { FileUpload } from "@/components/file-upload"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { getAllDocuments } from "@/lib/api-helpers"
 import { PDFPreview } from "@/components/pdf-preview-dialog"
-import { DotPattern } from "@/components/magicui/dot-pattern"
-import { cn } from "@/lib/utils"
+import { RecentUploads } from "@/components/recent-uploads"
+import { TimelineView } from "@/components/timeline-view"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getAllDocuments } from "@/lib/api-helpers"
+import { Calendar, ChevronRight, FileText, Plus } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview")
@@ -48,12 +46,8 @@ export default function DashboardPage() {
   return (
     <DashboardShell>
       <div className="relative">
-        <DotPattern
-          glow={true}
-          className={cn(
-            "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-          )}
-        />
+
+
         <DashboardHeader heading="Dashboard" text="Manage your legal documents and cases.">
           <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
             <DialogTrigger asChild>
@@ -74,6 +68,8 @@ export default function DashboardPage() {
         </DashboardHeader>
       </div>
 
+
+
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -83,12 +79,7 @@ export default function DashboardPage() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card className="col-span-2">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -154,12 +145,7 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="cases" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <Card>
             <CardHeader>
               <CardTitle>My Cases</CardTitle>
@@ -198,11 +184,10 @@ export default function DashboardPage() {
                           <p className="text-sm text-muted-foreground">{caseItem.type}</p>
                         </div>
                         <div
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            caseItem.status === "Active"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                              : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                          }`}
+                          className={`px-2 py-1 rounded-full text-xs ${caseItem.status === "Active"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                            }`}
                         >
                           {caseItem.status}
                         </div>
@@ -212,7 +197,7 @@ export default function DashboardPage() {
                           <span className="text-muted-foreground">Documents:</span>
                           <span>{caseItem.documents}</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify- text-sm">
                           <span className="text-muted-foreground">Next Deadline:</span>
                           <span>{caseItem.nextDeadline}</span>
                         </div>
@@ -229,12 +214,7 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="documents" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <Card>
             <CardHeader>
               <CardTitle>Documents</CardTitle>
@@ -297,8 +277,8 @@ export default function DashboardPage() {
                             </p>
                           )}
                           <div className="flex justify-between mt-4">
-                            <Button 
-                              variant="ghost" 
+                            <Button
+                              variant="ghost"
                               size="sm"
                               onClick={() => {
                                 setSelectedFile({
@@ -337,12 +317,7 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="calendar" className="space-y-4 relative">
-          <DotPattern
-            glow={true}
-            className={cn(
-              "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-            )}
-          />
+
           <Card>
             <CardHeader>
               <CardTitle>Calendar</CardTitle>
