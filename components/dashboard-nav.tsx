@@ -15,9 +15,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { SignedIn, UserButton } from "@clerk/nextjs"
-import { FileText, FolderOpen, Home, LogOut, Settings } from "lucide-react"
+import { Bell, CreditCard, FileText, FolderOpen, Home, LogOut } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { NotificationsSettings } from "./notifications-settings"
+import { SubscriptionManagement } from "./subscription-management"
 
 export function DashboardNav() {
   const pathname = usePathname()
@@ -41,13 +43,15 @@ export function DashboardNav() {
       href: "/documents",
       variant: "default",
     },
-    {
-      title: "Settings",
-      icon: Settings,
-      href: "/settings",
-      variant: "default",
-    },
   ]
+
+  const DotIcon = () => {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
+      </svg>
+    )
+  }
 
   return (
     <SidebarProvider>
@@ -84,31 +88,18 @@ export function DashboardNav() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                {/* <div className="flex items-center space-x-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="/placeholder.svg?height=24&width=24" alt="User" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <span>John Doe</span>
-                    <p className="text-xs text-muted-foreground">john.doe@example.com</p>
-                  </div>
-                </div> */}
                 <div className="text-xs text-muted-foreground">
-
                   <SignedIn>
-                    <UserButton showName />
+                    <UserButton showName>
+                      <UserButton.UserProfilePage label="Notifications" url="notifications" labelIcon={<Bell className="h-4 w-4" />}>
+                        <NotificationsSettings />
+                      </UserButton.UserProfilePage>
+                      <UserButton.UserProfilePage label="Subscription" url="subscription" labelIcon={<CreditCard className="h-4 w-4" />}>
+                        <SubscriptionManagement />
+                      </UserButton.UserProfilePage>
+                    </UserButton>
                   </SignedIn>
                 </div>
-
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/settings">
-                  <Settings className="h-4 w-4" />
-                  <span>Settings</span>
-                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
