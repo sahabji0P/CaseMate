@@ -15,7 +15,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { SignedIn, UserButton } from "@clerk/nextjs"
-import { Bell, CreditCard, FileText, FolderOpen, Home, LogOut } from "lucide-react"
+import { Bell, CreditCard, FileText, FolderOpen, Home } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { NotificationsSettings } from "./notifications-settings"
@@ -44,7 +44,7 @@ export function DashboardNav() {
       variant: "default",
     },
     {
-      title: "Upload",
+      title: "Summarization",
       icon: FileText,
       href: "/upload",
       variant: "default",
@@ -110,12 +110,7 @@ export function DashboardNav() {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/login">
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </Link>
-              </SidebarMenuButton>
+
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

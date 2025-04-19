@@ -1,11 +1,11 @@
 "use client"
 
+import { Ripple } from "@/components/magicui/ripple"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { ArrowDown, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { Ripple } from "@/components/magicui/ripple"
 
 import {
   SignedIn,
@@ -39,7 +39,7 @@ export default function WelcomePage() {
           <div className="space-x-4">
             <SignedOut>
               <Link href={"/auth/sign-in"}>
-                <Button className="shimmer-button bg-blue-600 hover:bg-blue-700">Login</Button>
+                <Button className="shimmer-button bg-blue-600 hover:bg-blue-700 text-white">Login</Button>
               </Link>
             </SignedOut>
             <SignedIn>
