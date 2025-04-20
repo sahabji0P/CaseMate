@@ -42,7 +42,9 @@ Return a single JSON object with the following fields. Use null for any fields n
   "deadlines":            ["Deadlines/compliance dates in original language"],
   "nextHearingDate":      "Next hearing date in YYYY-MM-DD format if mentioned",
   "keywords":             ["Keywords in original language"],
-  "relatedCases":         ["Referenced cases exactly as written"]
+  "relatedCases":         ["Referenced cases exactly as written"],
+  "caseSummary":          "Summary of the case and this document in very simple language understandable by a layman",
+  "isClosed":             "Whether the case is closed or not"
 }
 
 IMPORTANT INSTRUCTIONS:
