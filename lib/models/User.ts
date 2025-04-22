@@ -13,6 +13,7 @@ export interface IUser extends Document {
   linkedClients?: mongoose.Types.ObjectId[]; // for lawyers
   createdAt: Date;
   updatedAt: Date;
+  onboardingCompleted: boolean;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -26,7 +27,11 @@ const UserSchema = new Schema<IUser>({
   linkedLawyers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   linkedClients: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+  onboardingCompleted: { type: Boolean, default: false },
 });
 
-export default mongoose.model<IUser>('User', UserSchema);
+// Check if the model exists before compiling it
+const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+
+export default User;
