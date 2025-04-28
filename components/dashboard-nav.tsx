@@ -14,7 +14,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { SignedIn, UserButton } from "@clerk/nextjs"
+
 import { Bell, CreditCard, FileText, FolderOpen, Home } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -94,23 +94,10 @@ export function DashboardNav() {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <div className="text-xs text-muted-foreground">
-                  <SignedIn>
-                    <UserButton showName>
-                      <UserButton.UserProfilePage label="Notifications" url="notifications" labelIcon={<Bell className="h-4 w-4" />}>
-                        <NotificationsSettings />
-                      </UserButton.UserProfilePage>
-                      <UserButton.UserProfilePage label="Subscription" url="subscription" labelIcon={<CreditCard className="h-4 w-4" />}>
-                        <SubscriptionManagement />
-                      </UserButton.UserProfilePage>
-                    </UserButton>
-                  </SignedIn>
-                </div>
+              <SidebarMenuButton asChild>  
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

@@ -31,6 +31,9 @@ export default function WelcomePage() {
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-2xl font-bold">Case<span className="text-red-800">Mate</span></div>
           <div className="space-x-4">
+            <Link href="/contact">
+              <Button variant="ghost" className="text-white hover:bg-blue-900/30">Contact</Button>
+            </Link>
             <Link href="/auth/lawyer/login">
               <Button className="shimmer-button bg-blue-600 hover:bg-blue-700 text-white">For Lawyers</Button>
             </Link>
@@ -68,14 +71,15 @@ export default function WelcomePage() {
               </Button>
             </Link>
           </div>
-          <button
-            onClick={scrollToHowItWorks}
-            className="mt-20 text-blue-300 flex flex-col items-center animate-bounce"
-          >
-            <span className="mb-2">Learn More</span>
-            <ArrowDown size={24} />
-          </button>
+        
         </motion.div>
+        <button
+          onClick={scrollToHowItWorks}
+          className="absolute bottom-10 left-1/2 right-1/2 transform -translate-x-1/2 text-blue-300 flex flex-col items-center animate-bounce"
+        >
+          <span className="mb-2">Learn More</span>
+          <ArrowDown size={24} />
+        </button>
       </section>
 
       {/* How It Works Section */}
@@ -86,22 +90,22 @@ export default function WelcomePage() {
           <div className="grid md:grid-cols-3 gap-10">
             {[
               {
-                title: "Upload Legal Document",
+                title: "Connect Lawyer & Client",
                 description:
-                  "Simply upload your legal documents in any format. CaseMate supports PDFs, Word documents, and scanned images.",
-                icon: "📄",
+                  "Lawyers can invite clients to their CaseMate workspace, creating a secure environment for transparent communication and document sharing.",
+                icon: "🤝",
               },
               {
-                title: "AI Analyzes & Explains",
+                title: "AI-Powered Case Insights",
                 description:
-                  "Our advanced AI reads and interprets your documents, extracting key information and explaining complex legal terms in simple language.",
+                  "Our advanced AI analyzes legal documents, providing clear summaries and explanations that help clients understand their case status and progress.",
                 icon: "🧠",
               },
               {
-                title: "Get Actionable Insights",
+                title: "Track Progress Together",
                 description:
-                  "Receive clear next steps, deadline reminders, and document templates to help you navigate your legal journey.",
-                icon: "✅",
+                  "Both lawyers and clients can monitor case milestones, upcoming deadlines, and important dates in a shared timeline, fostering trust and collaboration.",
+                icon: "📅",
               },
             ].map((step, index) => (
               <motion.div
@@ -138,20 +142,20 @@ export default function WelcomePage() {
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {
-                title: "Simple Language Explanations",
-                description: "Complex legal jargon translated into plain, understandable language.",
+                title: "Enhanced Client Understanding",
+                description: "Clients gain clear insights into their case status, legal documents, and upcoming deadlines through AI-powered summaries.",
               },
               {
-                title: "Smart Deadline Tracking",
-                description: "Never miss an important filing date or court appearance again.",
+                title: "Strengthened Lawyer-Client Trust",
+                description: "Transparent communication and shared case visibility help lawyers build stronger relationships with their clients.",
               },
               {
-                title: "Document Templates",
-                description: "Access to professionally drafted templates for common legal responses.",
+                title: "Streamlined Case Management",
+                description: "Lawyers can efficiently organize case materials, track deadlines, and keep clients informed with minimal effort.",
               },
               {
-                title: "Case Timeline Visualization",
-                description: "See your entire case journey in an intuitive visual timeline.",
+                title: "Reduced Communication Barriers",
+                description: "Complex legal concepts are explained in accessible language, helping clients feel more confident and informed throughout their case.",
               },
             ].map((feature, index) => (
               <motion.div
