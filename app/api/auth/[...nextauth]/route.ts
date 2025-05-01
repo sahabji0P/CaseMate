@@ -1,10 +1,12 @@
-import NextAuth from "next-auth"
+import NextAuth, { AuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { compare } from "bcryptjs"
 import connectDB from "@/lib/mongodb"
 import User from "@/lib/models/User"
+import { JWT } from "next-auth/jwt"
+import { Session } from "next-auth"
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -34,7 +36,7 @@ const handler = NextAuth({
         if (!isPasswordValid) {
           throw new Error("Invalid password")
         }
-
+        
         return {
           id: user._id.toString(),
           email: user.email,
@@ -45,16 +47,19 @@ const handler = NextAuth({
       }
     })
   ],
+  
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT, user: any }) {
       if (user) {
+        token.id = user.id
         token.role = user.role
         token.onboardingCompleted = user.onboardingCompleted
       }
       return token
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session, token: JWT }) {
       if (session?.user) {
+        session.user.id = token.id as string
         session.user.role = token.role as string
         session.user.onboardingCompleted = token.onboardingCompleted as boolean
       }
@@ -65,9 +70,13 @@ const handler = NextAuth({
     signIn: '/auth/login',
     error: '/auth/error',
   },
+  
   session: {
-    strategy: "jwt"
+    strategy: "jwt" as const,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   }
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST } 

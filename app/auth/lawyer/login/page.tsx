@@ -6,11 +6,13 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useUserStore } from "@/store/userStore"
 
 export default function LawyerLoginPage() {
   const router = useRouter()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const setUser = useUserStore((state) => state.setUser)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -33,6 +35,16 @@ export default function LawyerLoginPage() {
         setError("Invalid credentials")
         return
       }
+      console.log(result,"saved in store")
+      // Save user details in store
+      setUser({
+        id: result?.id || "",
+        email: result?.email || "",
+        name: result?.name || "",
+        role: "lawyer",
+        onboardingCompleted: result?.onboardingCompleted || false
+      })
+     
 
       router.push("/dashboard/lawyer")
     } catch (error) {

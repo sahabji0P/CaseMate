@@ -5,7 +5,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import type React from "react"
 import "./globals.css"
-
+import { Providers } from "./provider"
 import { dark } from '@clerk/themes'
 import { Ripple } from "@/components/magicui/ripple";
 
@@ -25,14 +25,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+      <Providers>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <div className="flex flex-col min-h-screen">
             <main className="flex-grow">
               {children}
             </main>
             <Footer />
-          </div>
-        </ThemeProvider>
+            </div>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )
