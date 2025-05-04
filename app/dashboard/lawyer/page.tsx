@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useCaseFolderStore } from "@/store/caseFolderStore";
+import CaseFilesManager from "./Files/CaseFolderManager";
 
 // import { CalendarWidget } from "@/components/calendar-widget"
 // import { CaseFolders } from "@/components/case-folders"
@@ -463,189 +465,210 @@ import { useSession } from 'next-auth/react';
 //   )
 // }
 
-// export default function GetingCases() {
-//   const [cases, setCases] = useState([]);
-//   const [selectedCase, setSelectedCase] = useState(null);
-//   const [editMode, setEditMode] = useState(false);
-//   const { data: session } = useSession();
+export default function GetingCases() {
+  const [selectedCase, setSelectedCase] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [showFiles, setShowFiles] = useState(false);
+  const { data: session } = useSession();
+  const {
+    cases,
+    setCases,
+    updateCase,
+    deleteCase: removeCase,
+  } = useCaseFolderStore();
 
-//   useEffect(() => {
-//     const fetchCases = async () => {
-//       const res = await fetch('/api/cases', { credentials: 'include' });
-//       const data = await res.json();
-//       setCases(data);
-//     };
-//     fetchCases();
-//   }, []);
+  useEffect(() => {
+    const fetchCases = async () => {
+      const res = await fetch('/api/cases', {
+        next: { tags: ['cases'], revalidate: 60 }, // ⬅️ tag-based cache + revalidate
+        credentials: 'include',
+        cache: 'force-cache', // or 'default' (force-cache works with revalidate)
+      });
 
-//   const handleDelete = async (id: string) => {
-//     const confirmed = confirm('Are you sure you want to delete this case?');
-//     if (!confirmed) return;
+      if (!res.ok) {
+        console.error('Failed to fetch cases');
+        return;
+      }
 
-//     const res = await fetch(`/api/cases/${id}`, {
-//       method: 'DELETE',
-//       credentials: 'include',
-//     });
+      const data = await res.json();
+      setCases(data);
+      console.log(data);
+    };
 
-//     if (res.ok) {
-//       setCases((prev) => prev.filter((c) => c._id !== id));
-//       setSelectedCase(null);
-//     }
-//   };
+    if (cases.length === 0) fetchCases(); // prevent re-fetch if already stored
+  }, [setCases, cases.length]);
 
-//   const handleUpdate = async () => {
-//     const res = await fetch(`/api/cases/${selectedCase._id}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       credentials: 'include',
-//       body: JSON.stringify({
-//         ...selectedCase,
-//         lawyerId: undefined, // ensure not being updated
-//         clientId: undefined,
-//       }),
-//     });
+  const handleDelete = async (id: string) => {
+    const confirmed = confirm('Are you sure you want to delete this case?');
+    if (!confirmed) return;
 
-//     if (res.ok) {
-//       const updated = await res.json();
-//       setCases((prev) =>
-//         prev.map((c) => (c._id === updated._id ? updated : c))
-//       );
-//       setEditMode(false);
-//     }
-//   };
+    const res = await fetch(`/api/cases/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-//   const handleChange = (e) => {
-//     setSelectedCase({
-//       ...selectedCase,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
+    if (res.ok) {
+      removeCase(id);
+      setSelectedCase(null);
+    }
+  };
 
-//   return (
-//     <div className="p-6 max-w-4xl mx-auto">
-//       <h1 className="text-2xl font-bold mb-4">Case Folders</h1>
+  const handleUpdate = async () => {
+    const res = await fetch(`/api/cases/${selectedCase._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        ...selectedCase,
+        lawyerId: undefined,
+        clientId: undefined,
+      }),
+    });
 
-//       <ul className="space-y-2">
-//         {cases.map((caseItem) => (
-//           <li
-//             key={caseItem._id}
-//             onClick={() => {
-//               setSelectedCase(caseItem);
-//               setEditMode(false);
-//             }}
-//             className="cursor-pointer p-3 border rounded hover:bg-gray-100"
-//           >
-//             {caseItem.title}
-//           </li>
-//         ))}
-//       </ul>
+    if (res.ok) {
+      const updated = await res.json();
+      updateCase(updated._id, updated);
+      setEditMode(false);
+    }
+  };
 
-//       {selectedCase && (
-//         <div className="mt-6 border-t pt-4">
-//           <h2 className="text-xl font-semibold">Case Details</h2>
+  const handleChange = (e) => {
+    setSelectedCase({
+      ...selectedCase,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-//           {editMode ? (
-//             <div className="space-y-3 mt-2">
-//               <input
-//                 name="title"
-//                 value={selectedCase.title}
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               />
-//               <textarea
-//                 name="description"
-//                 value={selectedCase.description}
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               />
-//               <input
-//                 name="caseNumber"
-//                 value={selectedCase.caseNumber}
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               />
-//               <select
-//                 name="status"
-//                 value={selectedCase.status}
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               >
-//                 <option value="active">Active</option>
-//                 <option value="closed">Closed</option>
-//                 <option value="pending">Pending</option>
-//               </select>
-//               <select
-//                 name="priority"
-//                 value={selectedCase.priority}
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               >
-//                 <option value="high">High</option>
-//                 <option value="medium">Medium</option>
-//                 <option value="low">Low</option>
-//               </select>
-//               <input
-//                 name="courtName"
-//                 value={selectedCase.courtName || ''}
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               />
-//               <input
-//                 name="judgeName"
-//                 value={selectedCase.judgeName || ''}
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               />
-//               <input
-//                 name="nextHearingDate"
-//                 type="date"
-//                 value={
-//                   selectedCase.nextHearingDate
-//                     ? new Date(selectedCase.nextHearingDate).toISOString().split('T')[0]
-//                     : ''
-//                 }
-//                 onChange={handleChange}
-//                 className="w-full p-2 border rounded"
-//               />
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Case Folders</h1>
 
-//               <div className="flex gap-2">
-//                 <button onClick={handleUpdate} className="bg-green-600 text-white px-4 py-2 rounded">
-//                   Save
-//                 </button>
-//                 <button onClick={() => setEditMode(false)} className="bg-gray-500 text-white px-4 py-2 rounded">
-//                   Cancel
-//                 </button>
-//               </div>
-//             </div>
-//           ) : (
-//             <div className="mt-2 space-y-2">
-//               <p><strong>Title:</strong> {selectedCase.title}</p>
-//               <p><strong>Description:</strong> {selectedCase.description}</p>
-//               <p><strong>Case Number:</strong> {selectedCase.caseNumber}</p>
-//               <p><strong>Status:</strong> {selectedCase.status}</p>
-//               <p><strong>Priority:</strong> {selectedCase.priority}</p>
-//               <p><strong>Court Name:</strong> {selectedCase.courtName}</p>
-//               <p><strong>Judge Name:</strong> {selectedCase.judgeName}</p>
-//               <p><strong>Next Hearing Date:</strong> {selectedCase.nextHearingDate?.slice(0, 10)}</p>
-//               <p><strong>Client ID:</strong> {selectedCase.clientId}</p>
-//               <p><strong>Lawyer ID:</strong> {selectedCase.lawyerId}</p>
+      <ul className="space-y-2">
+        {cases.map((caseItem) => (
+          <li
+            key={caseItem._id}
+            onClick={() => {
+              setSelectedCase(caseItem);
+              setEditMode(false);
+            }}
+            className="cursor-pointer p-3 border rounded hover:bg-gray-100"
+          >
+            {caseItem.title}
+          </li>
+        ))}
+      </ul>
 
-//               {session?.user?.role === 'lawyer' && (
-//                 <div className="flex gap-2 mt-4">
-//                   <button onClick={() => setEditMode(true)} className="bg-blue-600 text-white px-4 py-2 rounded">
-//                     Edit
-//                   </button>
-//                   <button onClick={() => handleDelete(selectedCase._id)} className="bg-red-600 text-white px-4 py-2 rounded">
-//                     Delete
-//                   </button>
-//                 </div>
-//               )}
-//             </div>
-//           )}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
+      {selectedCase && (
+        <div className="mt-6 border-t pt-4">
+          <h2 className="text-xl font-semibold">Case Details</h2>
+
+          {editMode ? (
+            <div className="space-y-3 mt-2">
+              <input
+                name="title"
+                value={selectedCase.title}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <textarea
+                name="description"
+                value={selectedCase.description}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <input
+                name="caseNumber"
+                value={selectedCase.caseNumber}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <select
+                name="status"
+                value={selectedCase.status}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              >
+                <option value="active">Active</option>
+                <option value="closed">Closed</option>
+                <option value="pending">Pending</option>
+              </select>
+              <select
+                name="priority"
+                value={selectedCase.priority}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              >
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+              <input
+                name="courtName"
+                value={selectedCase.courtName || ''}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <input
+                name="judgeName"
+                value={selectedCase.judgeName || ''}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <input
+                name="nextHearingDate"
+                type="date"
+                value={
+                  selectedCase.nextHearingDate
+                    ? new Date(selectedCase.nextHearingDate).toISOString().split('T')[0]
+                    : ''
+                }
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+
+              <div className="flex gap-2">
+                <button onClick={handleUpdate} className="bg-green-600 text-white px-4 py-2 rounded">
+                  Save
+                </button>
+                <button onClick={() => setEditMode(false)} className="bg-gray-500 text-white px-4 py-2 rounded">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-2 space-y-2">
+              <p><strong>Title:</strong> {selectedCase.title}</p>
+              <p><strong>Description:</strong> {selectedCase.description}</p>
+              <p><strong>Case Number:</strong> {selectedCase.caseNumber}</p>
+              <p><strong>Status:</strong> {selectedCase.status}</p>
+              <p><strong>Priority:</strong> {selectedCase.priority}</p>
+              <p><strong>Court Name:</strong> {selectedCase.courtName}</p>
+              <p><strong>Judge Name:</strong> {selectedCase.judgeName}</p>
+              <p><strong>Next Hearing Date:</strong> {selectedCase.nextHearingDate?.slice(0, 10)}</p>
+              <p><strong>Client ID:</strong> {selectedCase.clientId?._id || selectedCase.clientId}</p>
+              <p><strong>Lawyer ID:</strong> {selectedCase.lawyerId}</p>
+
+              {session?.user?.role === 'lawyer' && (
+                <div className="flex gap-2 mt-4">
+                  <button onClick={() => setEditMode(true)} className="bg-blue-600 text-white px-4 py-2 rounded">
+                    Edit
+                  </button>
+                  <button onClick={() => handleDelete(selectedCase._id)} className="bg-red-600 text-white px-4 py-2 rounded">
+                    Delete
+                  </button>
+                </div>
+              )}
+              <button onClick={() => {
+                  !showFiles ? setShowFiles(true) : setShowFiles(false)
+              }}>
+                {showFiles ? "Hide Files" : "Show Files"}
+              </button>
+                {showFiles && <CaseFilesManager caseId={selectedCase._id} />}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+

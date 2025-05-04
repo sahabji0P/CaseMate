@@ -4,7 +4,7 @@ import connectDB from "@/lib/mongodb";
 import CaseFolder from "@/lib/models/CaseFolder";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
+import { revalidateTag, revalidatePath } from "next/cache";
 // GET /api/cases - Get all cases for the current user
 export async function GET(req: Request) {
   try {
@@ -79,7 +79,8 @@ export async function POST(req: Request) {
     });
 
     await caseFolder.save();
-
+    revalidateTag('cases');
+    revalidatePath('/dashboard');
     return NextResponse.json(caseFolder, { status: 201 });
   } catch (error) {
     console.error("Error creating case:", error);

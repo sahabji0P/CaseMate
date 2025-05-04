@@ -32,4 +32,5 @@ const DocumentSchema = new Schema<IDocument>({
   ]
 });
 
-export default mongoose.model<IDocument>('Document', DocumentSchema);
+export default mongoose.models.Document || mongoose.model<IDocument>('Document', DocumentSchema);
+

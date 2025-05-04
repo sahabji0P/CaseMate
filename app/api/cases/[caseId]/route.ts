@@ -5,7 +5,7 @@ import CaseFolder from "@/lib/models/CaseFolder";
 import User from "@/lib/models/User";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
+import { revalidateTag, revalidatePath } from "next/cache";
 // GET /api/cases/[caseId] - Get a specific case
 export async function GET(
   req: Request,
@@ -103,6 +103,8 @@ export async function PUT(
     if (!caseFolder) {
       return NextResponse.json({ error: "Case not found" }, { status: 404 });
     }
+    revalidateTag('cases');
+    revalidatePath('/dashboard');
 
     return NextResponse.json(caseFolder);
   } catch (error) {
@@ -143,6 +145,8 @@ export async function DELETE(
     if (!caseFolder) {
       return NextResponse.json({ error: "Case not found" }, { status: 404 });
     }
+    revalidateTag('cases');
+    revalidatePath('/dashboard');
 
     return NextResponse.json({ message: "Case deleted successfully" });
   } catch (error) {
