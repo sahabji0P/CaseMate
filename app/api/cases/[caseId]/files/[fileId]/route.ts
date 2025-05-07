@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 import Document from "@/lib/models/Documents";
 import { Readable } from "stream";
+import DocumentMetadata from '@/lib/models/DocumentsMetadata'
 
 // GET: Download a specific file
 export async function GET(req: NextRequest)  {
@@ -52,7 +53,8 @@ export async function GET(req: NextRequest)  {
   }
 }
 
-// DELETE: Remove file from GridFS and Document collection
+// DELETE: Remove file from GridFS and Document collection api/cases/[caseId]/files/[fileId]
+// DELETE: /api/cases/[caseId]/files/[fileId]
 export async function DELETE(req: NextRequest) {
   const url = new URL(req.url);
   const caseId = url.pathname.split("/")[3];
@@ -65,18 +67,40 @@ export async function DELETE(req: NextRequest) {
     }
 
     await connectDB();
+    const fileID = mongoose.Types.ObjectId.createFromHexString(fileId);
 
-    const fileID =  mongoose.Types.ObjectId.createFromHexString(fileId);
+    const sessionMongo = await mongoose.startSession();
+    sessionMongo.startTransaction();
 
-    // Remove file from GridFS
-    await gfsBucket!.delete(fileID);
+    // 1. Find the document
+    const doc = await Document.findOne({ fileId: fileID }).session(sessionMongo);
+    if (!doc) {
+      await sessionMongo.abortTransaction();
+      sessionMongo.endSession();
+      return NextResponse.json({ error: "File not found in documents" }, { status: 404 });
+    }
 
-    // Remove metadata record
-    await Document.deleteOne({ fileId: fileID });
+    // 2. Delete metadata
+    await DocumentMetadata.deleteOne({ _id: doc.metadataId }).session(sessionMongo);
+
+    // 3. Delete document entry
+    await Document.deleteOne({ fileId: fileID }).session(sessionMongo);
+
+    await sessionMongo.commitTransaction();
+    sessionMongo.endSession();
+
+    // 4. Delete file from GridFS (outside transaction)
+    try {
+      await gfsBucket!.delete(fileID);
+    } catch (err) {
+      console.error(`Failed to delete file ${fileId} from GridFS`, err);
+      // Optionally log for later cleanup
+    }
 
     return NextResponse.json({ message: "File deleted successfully" }, { status: 200 });
-  } catch(error) {
+  } catch (error) {
     console.error("Error deleting file:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+

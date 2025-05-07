@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 
 interface FileRecord {
-  _id: string;
+  uploadedBy: string;
   fileId: string;
-  filename: string;
-  contentType: string;
+  originalName: string;
+  fileType?: string;
+  fileSize?: number;
   uploadDate: string;
-  caseId: string;
+  metadataId?: string;
+  isSharedWithClient: boolean;
+  comments: { author: string; message: string; timestamp: string }[];
 }
 
 interface Metadata {
@@ -36,11 +39,10 @@ export default function CaseFilesManager({ caseId }: { caseId: string }) {
     setUploading(true);
 
     try {
-      const res = await fetch(`/api/cases/${caseId}/files`, {
-        method: "POST",
-        body: formData,
-      });
-
+        const res = await fetch(`/api/cases/${caseId}/files`, {
+          method: "POST",
+          body: formData,
+        });
       if (!res.ok) throw new Error("Upload failed");
       await fetchFiles();
       form.reset();
@@ -82,10 +84,10 @@ export default function CaseFilesManager({ caseId }: { caseId: string }) {
     await fetchFiles();
   };
 
-  const handleShowMetadata = async (fileId: string) => {
+  const handleShowMetadata = async (fileId: string, metadataId: string) => {
     try {
       const res = await fetch(
-        `/api/cases/${caseId}/files/${fileId}/metadata`
+        `/api/cases/${caseId}/files/${fileId}/metadata/${metadataId}/`
       );
 
       if (!res.ok) {
@@ -127,14 +129,14 @@ export default function CaseFilesManager({ caseId }: { caseId: string }) {
         <p>No files uploaded yet.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {files.map((file) => (
+          {files?.map((file) => (
             <div
-              key={file._id}
+              key={file.fileId}
               className="bg-white shadow-md rounded-lg p-4 border border-gray-200 flex flex-col justify-between"
             >
               <div className="mb-4">
                 <h3 className="text-lg font-semibold break-words">
-                  {file.filename}
+                  {file.originalName}
                 </h3>
                 <p className="text-sm text-gray-600">
                   Uploaded: {new Date(file.uploadDate).toLocaleString()}
@@ -142,7 +144,7 @@ export default function CaseFilesManager({ caseId }: { caseId: string }) {
               </div>
               <div className="flex flex-col gap-2">
                 <button
-                  onClick={() => handleDownload(file.fileId, file.filename)}
+                  onClick={() => handleDownload(file.fileId, file.originalName)}
                   className="bg-green-600 text-white text-sm py-2 rounded hover:bg-green-700 transition"
                 >
                   Download
@@ -154,11 +156,17 @@ export default function CaseFilesManager({ caseId }: { caseId: string }) {
                   Delete
                 </button>
                 <button
-                  onClick={() => handleShowMetadata(file.fileId)}
-                  className="bg-gray-700 text-white text-sm py-2 rounded hover:bg-gray-800 transition"
-                >
-                  Show Metadata
-                </button>
+  onClick={() => handleShowMetadata(file.fileId, file.metadataId!)}
+  disabled={!file.metadataId}
+  className={`text-sm py-2 rounded transition ${
+    file.metadataId
+      ? "bg-gray-700 text-white hover:bg-gray-800"
+      : "bg-gray-300 text-gray-600 cursor-not-allowed"
+  }`}
+>
+  {file.metadataId ? "Show Metadata" : "Generating Metadata..."}
+</button>
+
               </div>
             </div>
           ))}

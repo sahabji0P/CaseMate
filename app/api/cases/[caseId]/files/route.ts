@@ -38,12 +38,13 @@ export async function GET(req: NextRequest) {
 }
 
 // POST: Upload PDF document to GridFS and create Document entry
+// POST: Upload PDF document to GridFS and create Document entry
 export async function POST(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const caseId = url.pathname.split("/")[3];
-
     const session = await getServerSession(authOptions);
+
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
     return await new Promise((resolve, reject) => {
       uploadStream.on("finish", async () => {
         try {
-          // Save document metadata in Documents collection
+          // Save Document first
           const doc = new Document({
             caseId: new mongoose.Types.ObjectId(caseId),
             uploadedBy: new mongoose.Types.ObjectId(userId),
@@ -82,24 +83,39 @@ export async function POST(req: NextRequest) {
             uploadDate: new Date(),
           });
 
-          await doc.save();
+          const savedDoc = await doc.save();
 
-          // 🧠 Process with Gemini
-          const metadataJSON = await processDocumentWithGemini(buffer, file.type);
-          const metadata = JSON.parse(metadataJSON);
+          // Trigger async metadata generation
+          // (async () => {
+          //   try {
+          //     const metadataJSON = await processDocumentWithGemini(buffer, file.type);
+          //     const metadata = JSON.parse(metadataJSON);
 
-          // 📦 Store in DocumentMetadata schema
-          await DocumentMetadata.create({
-            ...metadata,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          });
+          //     const savedMetadata = await DocumentMetadata.create({
+          //       ...metadata,
+          //       createdAt: new Date(),
+          //       updatedAt: new Date(),
+          //     });
 
+          //     // Update Document with metadataId
+          //     await Document.findByIdAndUpdate(savedDoc._id, {
+          //       metadataId: savedMetadata._id,
+          //     });
+          //     console.log("Metadata generated and saved successfully ");
+          //     revalidatePath(`api/cases/${caseId}`);
+          //   } catch (err) {
+          //     console.error("Metadata generation failed:", err);
+          //     // Optional: log to error tracking service
+          //   }
+          // })();
+
+
+          // ✅ Immediately return response
           revalidatePath(`/cases/${caseId}`);
-          resolve(NextResponse.json(doc, { status: 201 }));
+          resolve(NextResponse.json(savedDoc, { fileId: uploadStream.id ,status: 201 }));
         } catch (err) {
-          console.error("Metadata extraction error:", err);
-          reject(NextResponse.json({ error: "Failed to extract metadata" }, { status: 500 }));
+          console.error("Error saving document:", err);
+          reject(NextResponse.json({ error: "Failed to save document" }, { status: 500 }));
         }
       });
 
@@ -109,7 +125,8 @@ export async function POST(req: NextRequest) {
       });
     });
   } catch (error) {
-    console.error("Error uploading document:", error);
+    console.error("Unexpected server error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
