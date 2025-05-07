@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@/components/theme-provider"
 import { Footer } from "@/components/footer"
+import "@/lib/init"
 
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
