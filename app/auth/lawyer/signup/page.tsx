@@ -6,12 +6,12 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-
+import { useUserStore } from "@/store/userStore"
 export default function LawyerSignupPage() {
   const router = useRouter()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
+  const setUser = useUserStore((state) => state.setUser)
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError("")
@@ -41,10 +41,10 @@ export default function LawyerSignupPage() {
       })
 
       const data = await response.json()
-
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong")
       }
+
 
       // Sign in the user after successful signup
       const result = await signIn("credentials", {
@@ -58,7 +58,15 @@ export default function LawyerSignupPage() {
         setError("Error signing in after registration")
         return
       }
-
+      console.log(result,"saved in store")
+      // Save user details in store
+      setUser({
+        id: result?.id || "",
+        email: result?.email || "",
+        name: result?.name || "",
+        role: "lawyer",
+        onboardingCompleted: result?.onboardingCompleted || false
+      })
       router.push("/dashboard/lawyer")
     } catch (error) {
       if (error instanceof Error) {

@@ -5,9 +5,6 @@ interface User {
   id: string
   name: string
   email: string
-  mobileNumber?: string
-  aadharNumber?: string
-  barCouncilId?: string
   role: 'lawyer' | 'client'
   linkedLawyers?: string[]
   linkedClients?: string[]

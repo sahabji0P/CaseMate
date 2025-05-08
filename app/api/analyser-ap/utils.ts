@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { NextResponse } from 'next/server';
 
 if (!process.env.GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY is not set in environment variables');
@@ -7,7 +6,7 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-async function processDocumentWithGemini(buffer: Buffer, mimeType: string): Promise<string> {
+export default async function processDocumentWithGemini(buffer: Buffer, mimeType: string): Promise<string> {
     try {
         // Use gemini-1.5-pro for all content types as it supports both text and vision
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
@@ -90,24 +89,24 @@ IMPORTANT INSTRUCTIONS:
     }
 }
 
-export async function POST(request: Request) {
-    try {
-        const formData = await request.formData();
-        const file = formData.get('file') as File;
+// export async function POST(request: Request) {
+//     try {
+//         const formData = await request.formData();
+//         const file = formData.get('file') as File;
 
-        if (!file) {
-            return NextResponse.json({ error: 'No file provided' }, { status: 400 });
-        }
+//         if (!file) {
+//             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+//         }
 
-        const buffer = Buffer.from(await file.arrayBuffer());
-        const result = await processDocumentWithGemini(buffer, file.type);
+//         const buffer = Buffer.from(await file.arrayBuffer());
+//         const result = await processDocumentWithGemini(buffer, file.type);
 
-        return NextResponse.json({ result });
-    } catch (error) {
-        console.error('Error processing document:', error);
-        return NextResponse.json(
-            { error: error instanceof Error ? error.message : 'Failed to process document' },
-            { status: 500 }
-        );
-    }
-} 
+//         return NextResponse.json({ result });
+//     } catch (error) {
+//         console.error('Error processing document:', error);
+//         return NextResponse.json(
+//             { error: error instanceof Error ? error.message : 'Failed to process document' },
+//             { status: 500 }
+//         );
+//     }
+// } 

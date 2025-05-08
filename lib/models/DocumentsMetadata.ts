@@ -61,4 +61,4 @@ const DocumentMetadataSchema = new Schema<IDocumentMetadata>({
   updatedAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model<IDocumentMetadata>('DocumentMetadata', DocumentMetadataSchema);
+export default mongoose.models.DocumentMetadata || mongoose.model<IDocumentMetadata>('DocumentMetadata', DocumentMetadataSchema);
