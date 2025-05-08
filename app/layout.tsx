@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/components/theme-provider"
 import { Footer } from "@/components/footer"
 
 import type { Metadata } from "next"
@@ -6,8 +5,6 @@ import { Inter } from "next/font/google"
 import type React from "react"
 import "./globals.css"
 
-import { dark } from '@clerk/themes'
-import { Ripple } from "@/components/magicui/ripple";
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,14 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <div className="flex flex-col min-h-screen">
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </ThemeProvider>
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+        </div>
+
       </body>
     </html>
   )

@@ -22,9 +22,9 @@ export default withAuth(
     }
 
     // Protect client routes
-    if (path.startsWith("/dashboard/client") && token?.role !== "client") {
-      return NextResponse.redirect(new URL("/auth/client/login", req.url))
-    }
+    // if (path.startsWith("/dashboard/client") && token?.role !== "client") {
+    //   return NextResponse.redirect(new URL("/auth/client/login", req.url))
+    // }
 
     return NextResponse.next()
   },

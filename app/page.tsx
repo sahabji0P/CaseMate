@@ -34,10 +34,10 @@ export default function WelcomePage() {
             <Link href="/contact">
               <Button variant="ghost" className="text-white hover:bg-blue-900/30">Contact</Button>
             </Link>
-            <Link href="/auth/lawyer/login">
+            <Link href="/dashboard/lawyer">
               <Button className="shimmer-button bg-blue-600 hover:bg-blue-700 text-white">For Lawyers</Button>
             </Link>
-            <Link href="/auth/client/login">
+            <Link href="/dashboard/client">
               <Button className="shimmer-button bg-red-600 hover:bg-red-700 text-white">For Clients</Button>
             </Link>
           </div>
@@ -71,7 +71,7 @@ export default function WelcomePage() {
               </Button>
             </Link>
           </div>
-        
+
         </motion.div>
         <button
           onClick={scrollToHowItWorks}
