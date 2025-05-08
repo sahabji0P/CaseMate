@@ -38,7 +38,7 @@ async function connectDB() {
     console.log('MongoDB connected successfully');
 
     const db = mongoose.connection.db;
-    console.log(db);
+    // console.log(db);
     gfsBucket = new GridFSBucket(db, { bucketName: 'uploads' });
     console.log('GridFSBucket initialized');
 
